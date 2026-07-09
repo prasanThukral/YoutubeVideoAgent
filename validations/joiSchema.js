@@ -20,3 +20,8 @@ export const loginSchema = Joi.object({
     }).required(),
     password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
 })
+
+export const aiChatSchema = Joi.object({
+    model: Joi.string().valid(...["claude-haiku-4-5-20251001"]).required(),
+    content: Joi.string().required(),
+})

@@ -55,6 +55,26 @@ const refreshTokenSchema = new mongoose.Schema({
     }
 });
 
+const convoIdSchema = new mongoose.Schema({
+    thread_id:{
+        type: String,
+        required: true,
+        unique:true,
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        index: true
+    },
+    issuedAt: {
+        type: Date,
+        default: Date.now,
+        expires: 60 * 60 * 24 * 7 // 7 days, adjust to your actual refresh token lifetime
+    }
+})
+
+
 userSchema.pre('save',async function(){
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password,salt)
@@ -70,5 +90,7 @@ userSchema.methods.compareHash = async function(candidatePassword){
 
 const userModel = mongoose.model('userSchema',userSchema)
 const refreshModel = mongoose.model('refreshToken',refreshTokenSchema)
+const convoIdModel = mongoose.model('convoId',convoIdSchema)
 
-export {userModel,refreshModel}
+
+export {userModel,refreshModel,convoIdModel}

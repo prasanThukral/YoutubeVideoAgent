@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 dotenv.config() 
 
 
-export class AuthController{
+    export class AuthController{
 
     static async register(req,res){
         const {username,password,birth_year,email} =req.body
@@ -17,14 +17,18 @@ export class AuthController{
 
     }
 
+    static async delRefreshToken(req,res){
+        const {refreshToken} = req.body
+        refreshModel.deleteOne({token:refreshToken})
+        res.status(StatusCodes.ACCEPTED).json({success:"Successfully deleted"})
+    }
+
     static async login(req,res){
         await loginSchema.validateAsync(req.body);
         const {email,password} =req.body
         const data = await userModel.findOne({email})
-console.log(data)
         const isPasswordCorrect = await data.compareHash(password);
         if(!isPasswordCorrect) throw BadRequestError('Password was wrong')
-        
         const accessToken = await data.generateAccessToken();
         
         const refreshToken = jwt.sign({user_id:data._id},process.env.REFRESH_TOKEN_SECRET);

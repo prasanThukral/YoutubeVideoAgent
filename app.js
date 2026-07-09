@@ -1,15 +1,17 @@
 import dotenv from 'dotenv'
 dotenv.config()
-import {authRouter} from './router/route.js'
+import {authRouter} from './router/authRoute.js'
 import { errorHandlingMiddleware } from './middleware/errorHandling.js'
 import express from 'express'
 const app = express();
 
 import {connectDB} from './db/mongoDB.js'
+import { aiRouter } from './router/aiRoute.js'
 
 app.use(express.json())
 
 app.use('/auth',authRouter)
+app.use('/ai',aiRouter)
 app.use(errorHandlingMiddleware)
 
 const start = async ()=>{
