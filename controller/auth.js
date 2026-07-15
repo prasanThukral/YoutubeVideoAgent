@@ -30,7 +30,7 @@ dotenv.config()
         const isPasswordCorrect = await data.compareHash(password);
         if(!isPasswordCorrect) throw BadRequestError('Password was wrong')
         const accessToken = await data.generateAccessToken();
-        
+    
         const refreshToken = jwt.sign({user_id:data._id},process.env.REFRESH_TOKEN_SECRET);
 
         const saveToken = refreshModel.create({
@@ -40,8 +40,18 @@ dotenv.config()
         })
 
         res.status(StatusCodes.ACCEPTED).json({accessToken,refreshToken})
+    }
 
-
+    static async token(req,res){
+        const {refreshToken} = req.body;
+        const response = await refreshModel.findOne({token:refreshToken});
+        const getId = await userModel.findById(response.user_id)
+        const userDTO = {
+            userId:getId._id,name:getId.username
+        }
+        console.log(userDTO)
+        const authToken = jwt.sign(userDTO,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'10m'})
+        res.status(400).json({authToken:authToken})
     }
 
 }

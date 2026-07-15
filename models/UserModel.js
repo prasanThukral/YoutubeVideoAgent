@@ -81,7 +81,7 @@ userSchema.pre('save',async function(){
 })
 
 userSchema.methods.generateAccessToken = async function(){
-    return jwt.sign({userId:this._id,name:this.name},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'10m'})
+    return jwt.sign({userId:this._id,name:this.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'10m'})
     
 } 
 userSchema.methods.compareHash = async function(candidatePassword){

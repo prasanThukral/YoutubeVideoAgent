@@ -7,5 +7,6 @@ import {AuthController} from '../controller/auth.js'
 authRouter.post('/login',AuthController.login)
 authRouter.post('/registration',AuthController.register)
 authRouter.delete('/logout',AuthController.delRefreshToken)
+authRouter.post('/token',AuthController.token)
 
 export {authRouter}
