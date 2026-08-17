@@ -1,4 +1,4 @@
-import { CustomError } from "./customError"
+import { CustomError } from "./customError.js"
 import {StatusCodes} from "http-status-codes"
 export class UnauthorisedError extends CustomError{
 

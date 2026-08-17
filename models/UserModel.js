@@ -73,6 +73,13 @@ const convoIdSchema = new mongoose.Schema({
         expires: 60 * 60 * 24 * 7 // 7 days, adjust to your actual refresh token lifetime
     }
 })
+const vectorMetaSchema = new mongoose.Schema({
+    id:{
+        type: String,
+        required: true,
+        unique:true,
+    }
+})
 
 
 userSchema.pre('save',async function(){
@@ -91,6 +98,6 @@ userSchema.methods.compareHash = async function(candidatePassword){
 const userModel = mongoose.model('userSchema',userSchema)
 const refreshModel = mongoose.model('refreshToken',refreshTokenSchema)
 const convoIdModel = mongoose.model('convoId',convoIdSchema)
+const vectorMetaModel = mongoose.model('vectorMeta',vectorMetaSchema)
 
-
-export {userModel,refreshModel,convoIdModel}
+export {userModel,refreshModel,convoIdModel,vectorMetaModel}

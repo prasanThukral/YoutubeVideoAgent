@@ -12,14 +12,14 @@ dotenv.config()
     static async register(req,res){
         const {username,password,birth_year,email} =req.body
         await registerSchema.validateAsync(req.body)
-        userModel.create({username,password,birth_year,email})
+        await userModel.create({username,password,birth_year,email})
         res.status(StatusCodes.CREATED).json({success:"Account Successfully Created "})
 
     }
 
     static async delRefreshToken(req,res){
         const {refreshToken} = req.body
-        refreshModel.deleteOne({token:refreshToken})
+        await refreshModel.deleteOne({token:refreshToken})
         res.status(StatusCodes.ACCEPTED).json({success:"Successfully deleted"})
     }
 
@@ -28,12 +28,12 @@ dotenv.config()
         const {email,password} =req.body
         const data = await userModel.findOne({email})
         const isPasswordCorrect = await data.compareHash(password);
-        if(!isPasswordCorrect) throw BadRequestError('Password was wrong')
+        if(!isPasswordCorrect) throw new BadRequestError('Password was wrong')
         const accessToken = await data.generateAccessToken();
     
         const refreshToken = jwt.sign({user_id:data._id},process.env.REFRESH_TOKEN_SECRET);
 
-        const saveToken = refreshModel.create({
+        const saveToken = await refreshModel.create({
             user_id:data._id,
             token:refreshToken,
             issuedAt: new Date()
@@ -45,13 +45,14 @@ dotenv.config()
     static async token(req,res){
         const {refreshToken} = req.body;
         const response = await refreshModel.findOne({token:refreshToken});
+        if (!response) throw new BadRequestError('Invalid Token')
         const getId = await userModel.findById(response.user_id)
         const userDTO = {
             userId:getId._id,name:getId.username
         }
         console.log(userDTO)
         const authToken = jwt.sign(userDTO,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'10m'})
-        res.status(400).json({authToken:authToken})
+        res.status(StatusCodes.OK).json({authToken:authToken})
     }
 
 }
